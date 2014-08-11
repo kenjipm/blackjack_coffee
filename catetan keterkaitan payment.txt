@@ -1,0 +1,49 @@
+overall discount :
+ - discount > price > total discount > total > change
+
+initial price :
+ - subtotal > price > total discount > total > change
+ - price > total discount > total > change
+
+discount :
+ - price > total discount > total > change
+
+price :
+ - discount (disesuaikan sama price)
+ - total discount > total > change
+
+total discount :
+ - total > change
+
+pay :
+ - change
+
+
+
+
+
+
+
+
+yg pasti2 :
+overall discount > discount > total discount > total > change
+
+initial price > price > subtotal
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+overall discount :
+ - discount
+discount > price > 
