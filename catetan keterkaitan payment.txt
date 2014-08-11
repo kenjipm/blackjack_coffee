@@ -16,7 +16,7 @@ total discount :
  - total > change
 
 pay :
- - change
+ - change 
 
 
 
