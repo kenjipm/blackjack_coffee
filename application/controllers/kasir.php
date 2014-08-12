@@ -409,12 +409,14 @@ class Kasir extends CI_Controller {
         // kalo hasil post dari menu tambah
         if ($this->input->post('no_pembeli'))
         {
-            $order['no_pembeli'] = $this->input->post('no_pembeli');
+            $this->load->model('order_model');
+			
+            // $order['no_pembeli'] = $this->input->post('no_pembeli');
             $order['session_no'] = $this->input->post('session_no');
+			$order["no_pembeli"] = $this->order_model->get_jumlah_pembeli_in_session($order['session_no']) + 1;
             $order['nama_pembeli'] = $this->input->post('nama_customer');
             $order['keterangan'] = $this->input->post('keterangan');
-            
-            $this->load->model('order_model');
+			
             $order_id = $this->order_model->insert($order);
             
             $menu_limit = $this->input->post('menu_limit');
@@ -422,12 +424,13 @@ class Kasir extends CI_Controller {
             $this->load->model('order_menu_model');
             for($i=0; $i<$menu_limit; $i++)
             {
-                if ($this->input->post('menu_nama-'.$i))
+				$menu_nama = $this->input->post('menu_nama-'.$i);
+                if ($menu_nama)
                 {
                     $order_menu['keterangan'] = $this->input->post('menu_keterangan-'.$i);
                     $order_menu['menu_sequence'] = $this->input->post('menu_sequence-'.$i);
                     $menu_jml = intval($this->input->post('menu_jml-'.$i))?intval($this->input->post('menu_jml-'.$i)):1;
-                    $menu_id = $this->menu_model->get_id_from_nama($this->input->post('menu_nama-'.$i));
+                    $menu_id = $this->menu_model->get_id_from_nama($menu_nama);
                     $menu = $this->menu_model->get($menu_id);
                     
                     for ($j=0; $j<$menu_jml; $j++)
@@ -438,7 +441,15 @@ class Kasir extends CI_Controller {
                         $order_menu['harga_base'] = $menu->harga_base;
                         $order_menu['harga_setor'] = $menu->harga_setor;
                         $order_menu['nama_setor'] = $menu->nama_setor;
-                        $this->order_menu_model->insert($order_menu);
+                        $id_order_menu = $this->order_menu_model->insert($order_menu);
+						if (strlen($menu_nama) >= 3)
+						{
+							$menu_prefix = substr($menu_nama, 0, 3);
+							if (($menu_prefix == "[T]") || ($menu_prefix == "(+)"))
+							{
+								$this->order_menu_model->set_done($id_order_menu, 'true');
+							}
+						}
                     }
                 }
             }
